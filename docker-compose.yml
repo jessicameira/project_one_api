@@ -1,25 +1,17 @@
-
 version: "3.9"
 services:
+  db:
+    image: postgres
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgres
   api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    depends_on:
-      - postgres
-    networks:
-      - default
+    build: .
+    command: go run main.go
+    volumes:
+      - .:/project_one_api
     ports:
       - "8080:8080"
-    command: /go/api
-  postgres:
-    environment:
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_USER=postgres
-    build:
-      context: ./database
-      dockerfile: Dockerfile
-    ports:
-      - "5432:5432"
-    networks:
-      - default
+    depends_on:
+      - db
